@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Czy mogę to wkleić?</title>
+<meta name="description" content="Krótka gra o bezpiecznym korzystaniu z AI w pracy: co można wkleić do AI, a czego lepiej nie. A short game about using AI safely at work.">
+<!-- Link preview for LinkedIn and other social sites -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kian09j.github.io/czy_moge_to_wkleic/">
+<meta property="og:title" content="Czy mogę to wkleić? / Can I paste this?">
+<meta property="og:description" content="Co można wkleić do AI, a czego lepiej nie? 10 sytuacji z pracy, PL / EN.">
+<meta property="og:image" content="https://kian09j.github.io/czy_moge_to_wkleic/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Robot Bajtek i tytuł gry Czy mogę to wkleić?">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cpath d='M60 26V13' stroke='%2337352f' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='60' cy='10' r='8' fill='%23f5c84c' stroke='%2337352f' stroke-width='4'/%3E%3Crect x='10' y='26' width='100' height='84' rx='28' fill='%23ffffff' stroke='%2337352f' stroke-width='6'/%3E%3Crect x='24' y='42' width='72' height='52' rx='16' fill='%23f1f1ef' stroke='%2337352f' stroke-width='4'/%3E%3Cellipse cx='45' cy='66' rx='7' ry='10' fill='%2337352f'/%3E%3Cellipse cx='75' cy='66' rx='7' ry='10' fill='%2337352f'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #37352f;
+    --muted: #787774;
+    --faint: #9b9a97;
+    --line: #e9e9e7;
+    --hover: #f7f7f5;
+    --gray: #f1f1ef;
+    --blue: #2383e2;
+    --blue-hover: #0b6ec5;
+    --blue-bg: #e7f3f8;
+    --blue-text: #337ea9;
+    --green: #448361;
+    --green-bg: #dbeddb;
+    --red: #d44c47;
+    --red-bg: #fdebec;
+    --yellow-bg: #fbf3db;
+    --font: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", Helvetica, Arial, sans-serif, "Segoe UI Emoji", "Apple Color Emoji";
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.55;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 48px;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app { width: 100%; max-width: 680px; }
+  a { color: var(--blue-text); }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--line);
+  }
+  .logo { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 6px; }
+  .logo .ai {
+    font-family: SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 85%;
+    color: #eb5757; background: rgba(135, 131, 120, 0.15); border-radius: 4px; padding: 1px 5px;
+  }
+  .lang { display: flex; gap: 2px; background: var(--gray); border-radius: 6px; padding: 2px; }
+  .lang button {
+    font: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+    background: transparent; border: 0; border-radius: 4px; padding: 2px 10px; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { background: #fff; color: var(--text); box-shadow: 0 1px 2px rgba(15, 15, 15, 0.12); }
+  .lang button:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+  .stats { display: flex; gap: 6px; }
+  .pill {
+    font-size: 13px; font-weight: 500; color: var(--muted); background: var(--gray);
+    border-radius: 4px; padding: 2px 8px; display: flex; align-items: center; gap: 4px; white-space: nowrap;
+  }
+  .pill.bump { animation: bump 0.4s ease; }
+  @keyframes bump { 50% { transform: scale(1.12); } }
+
+  /* Progress: one segment per situation */
+  .trail { display: flex; gap: 4px; margin: 0 0 26px; }
+  .step { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+  .step.now { background: var(--blue); }
+  .step.ok { background: #6fbf8a; }
+  .step.no { background: #e8a5a1; }
+
+  .screen-in { animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* Mascot */
+  .mascot { display: block; overflow: visible; transform-origin: 50% 100%; }
+  .mascot .eyes-open { transform-origin: 60px 56px; animation: blink 5s ease-in-out infinite; }
+  .mascot .eyes-happy, .mascot .m-big, .mascot .m-o { display: none; }
+  .mascot[data-mood="happy"] .eyes-open, .mascot[data-mood="happy"] .m-smile { display: none; }
+  .mascot[data-mood="happy"] .eyes-happy, .mascot[data-mood="happy"] .m-big { display: inline; }
+  .mascot[data-mood="happy"] { animation: hop 0.5s ease; }
+  .mascot[data-mood="oops"] .m-smile { display: none; }
+  .mascot[data-mood="oops"] .m-o { display: inline; }
+  .mascot[data-mood="oops"] { animation: shake 0.4s ease; }
+  .mascot .pupil { transition: transform 0.3s; }
+  .mascot[data-mood="think"] .pupil { transform: translate(2px, -2px); }
+  @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(0.1); } }
+  @keyframes hop { 50% { transform: translateY(-8px); } }
+  @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+  .guide { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .guide .mascot { width: 44px; height: 44px; flex: 0 0 44px; }
+  .bubble { flex: 1; background: var(--gray); border-radius: 6px; padding: 10px 14px; }
+  .bubble.ok { background: var(--green-bg); }
+  .bubble.no { background: var(--red-bg); }
+  .bubble.pop { animation: fadeIn 0.25s ease; }
+
+  .round-tag {
+    display: inline-block; font-size: 12px; font-weight: 500; color: var(--blue-text); background: var(--blue-bg);
+    border-radius: 4px; padding: 1px 7px; margin-bottom: 8px;
+  }
+
+  /* The situation card */
+  .sit {
+    position: relative; border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px 18px;
+    margin: 4px 0 18px; box-shadow: 0 2px 8px rgba(15, 15, 15, 0.06);
+    display: flex; gap: 14px; align-items: flex-start; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .sit .icon { font-size: 30px; line-height: 1.1; flex: 0 0 auto; }
+  .sit .what { font-size: 20px; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .sit .want { margin: 0; color: var(--muted); }
+  .sit .want b { font-weight: 600; color: var(--text); }
+  .sit.done-ok { border-color: #b9dcc0; box-shadow: 0 0 0 1px #b9dcc0; }
+  .sit.done-work { border-color: #a9cbe0; box-shadow: 0 0 0 1px #a9cbe0; }
+  .sit.done-no { border-color: #f0b8b5; box-shadow: 0 0 0 1px #f0b8b5; }
+  .stamp {
+    position: absolute; top: -12px; right: 14px; font-size: 13px; font-weight: 600; border-radius: 6px;
+    padding: 2px 10px; transform: rotate(-3deg); display: inline-flex; gap: 5px; box-shadow: 0 1px 3px rgba(15, 15, 15, 0.15);
+    animation: stampIn 0.35s cubic-bezier(.2, .8, .2, 1.4) both;
+  }
+  @keyframes stampIn { from { opacity: 0; transform: rotate(-3deg) scale(1.6); } to { opacity: 1; transform: rotate(-3deg) scale(1); } }
+
+  /* The three answers */
+  .bins { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .bin {
+    position: relative; width: 100%; font: inherit; text-align: left; color: var(--text);
+    background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 12px 12px 12px; cursor: pointer;
+    display: flex; flex-direction: column; gap: 4px; box-shadow: 0 1px 2px rgba(15, 15, 15, 0.04);
+    transition: background 0.12s, border-color 0.12s, opacity 0.2s;
+  }
+  .bin:hover:not(:disabled) { background: var(--hover); border-color: #dcdcd9; }
+  .bin:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .bin:disabled { cursor: default; }
+  .bin .top { display: flex; align-items: center; gap: 8px; }
+  .bin .emoji { font-size: 22px; line-height: 1; }
+  .bin .key {
+    margin-left: auto; width: 22px; height: 22px; border-radius: 4px; display: grid; place-items: center;
+    font-size: 12px; font-weight: 600; color: var(--muted); box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .bin .label { font-weight: 600; line-height: 1.3; }
+  .bin .marks { display: flex; flex-wrap: wrap; gap: 4px; min-height: 0; }
+  .bin .mark { font-size: 12px; font-weight: 500; border-radius: 4px; padding: 1px 6px; animation: fadeIn 0.25s both; }
+  .bin .mark.right { background: var(--green-bg); color: var(--green); }
+  .bin .mark.you { background: rgba(227, 226, 224, 0.95); color: var(--text); }
+  .answered .bin:not(.is-right):not(.is-you) { opacity: 0.45; }
+  .answered .bin .key { display: none; }
+  .bin.is-right { border-color: #b9dcc0; box-shadow: inset 0 0 0 1px #b9dcc0; background: #f6fbf7; }
+  .bin.is-you:not(.is-right) { border-color: #f0b8b5; box-shadow: inset 0 0 0 1px #f0b8b5; background: #fffafa; }
+
+  /* Lesson callout */
+  .lesson { margin-top: 18px; padding: 14px 16px; border-radius: 6px; background: var(--gray); animation: fadeIn 0.3s 0.1s both; }
+  .lesson h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+  .lesson p { margin: 0; }
+
+  /* Buttons */
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; border: 0; border-radius: 6px;
+    padding: 8px 16px; background: var(--blue); color: #fff; display: inline-flex; align-items: center;
+    justify-content: center; gap: 6px; transition: background 0.12s;
+    box-shadow: inset 0 0 0 1px rgba(15, 15, 15, 0.1), 0 1px 2px rgba(15, 15, 15, 0.1);
+  }
+  .btn:hover { background: var(--blue-hover); }
+  .btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .actions { margin-top: 20px; display: flex; justify-content: flex-end; }
+
+  .footnote { margin: 32px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 12px; color: var(--faint); }
+  .hidden { display: none !important; }
+
+  /* Start and end pages */
+  .hero { display: flex; flex-direction: column; align-items: flex-start; }
+  .hero .mascot { width: 76px; height: 76px; margin: 12px 0 10px; }
+  .hero .bubble { flex: none; width: 100%; margin: 0 0 8px; }
+  h1 { font-size: 38px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 14px; }
+  h2 { font-size: 20px; font-weight: 600; margin: 28px 0 10px; }
+
+  .legend { width: 100%; margin: 10px 0 14px; }
+  .legend h2 { margin-top: 12px; }
+  .legend ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .legend li { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 6px; background: var(--tint); }
+  .legend .emoji { font-size: 22px; line-height: 1.2; }
+  .legend strong { display: block; font-weight: 600; }
+  .legend p { margin: 2px 0 0; }
+  .why { width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; margin: 0 0 14px; }
+  .why strong { font-weight: 600; }
+  .why p { margin: 2px 0 0; color: var(--muted); }
+  .expect { width: 100%; background: var(--blue-bg); border-radius: 6px; padding: 12px 14px; margin: 0 0 22px; }
+  .expect strong { font-weight: 600; }
+  .expect p { margin: 2px 0 0; }
+  .series { margin: 26px 0 0; font-size: 14px; color: var(--muted); }
+  .series a { margin-right: 10px; white-space: nowrap; }
+
+  .score-blob b { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .score-blob span { color: var(--muted); }
+  .score-msg { color: var(--muted); margin: 4px 0 4px; }
+  .check { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
+  .check li {
+    display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 6px;
+    background: var(--tint); animation: fadeIn 0.3s both; animation-delay: var(--delay);
+  }
+  .check .num {
+    flex: 0 0 24px; height: 24px; border-radius: 50%; background: #fff; display: grid; place-items: center;
+    font-size: 13px; font-weight: 600; box-shadow: inset 0 0 0 1px rgba(15, 15, 15, 0.1);
+  }
+  .check strong { font-weight: 600; }
+  .policy { display: flex; gap: 10px; border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; margin: 0; }
+  .policy .ico { font-size: 18px; line-height: 1.3; }
+  .review { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .review li { display: flex; align-items: center; gap: 10px; padding: 8px 2px; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .review .ri { width: 24px; text-align: center; }
+  .review .rt { flex: 1; }
+  .review .rb { font-size: 12px; font-weight: 500; border-radius: 4px; padding: 1px 7px; white-space: nowrap; display: inline-flex; gap: 4px; }
+  .review .rr { width: 20px; text-align: center; font-weight: 700; }
+  .review .rr.ok { color: var(--green); }
+  .review .rr.no { color: var(--red); }
+  .end-actions { margin-top: 22px; }
+
+  @media (max-width: 560px) {
+    .bins { grid-template-columns: 1fr; }
+    .bin { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+    .bin .top { flex: 0 0 auto; }
+    .bin .label { flex: 1; }
+    .bin .key { order: 3; margin-left: 0; }
+    .bin .marks { flex-basis: 100%; }
+    .bin .marks:empty { display: none; }
+  }
+  @media (max-width: 480px) {
+    body { padding-top: 16px; }
+    h1 { font-size: 30px; }
+    .sit .what { font-size: 18px; }
+    .actions .btn { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="logo" id="logo">Czy mogę to <span class="ai">wkleić?</span></div>
+    <div class="lang" id="lang" role="group" aria-label="Język / Language">
+      <button type="button" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <div class="stats hidden" id="stats">
+      <div class="pill" id="progressText">1/10</div>
+      <div class="pill" id="scoreText"></div>
+    </div>
+  </header>
+  <div class="trail hidden" id="trail"></div>
+
+  <main id="screen"></main>
+  <p class="footnote hidden" id="footnote"></p>
+</div>
+
+<script>
+// The three answers. "work" means an AI tool the company approved, used on a work account.
+const BIN_KEYS = ["ok", "work", "no"];
+const BIN_STYLE = {
+  ok:   { emoji: "✅", tint: "#edf3ec", pill: "#dbeddb", done: "done-ok" },
+  work: { emoji: "🏢", tint: "#e7f3f8", pill: "#d3e5ef", done: "done-work" },
+  no:   { emoji: "⛔", tint: "#fdebec", pill: "#fadcdb", done: "done-no" }
+};
+
+const CARDS_PL = [
+  { icon: "🌐", short: "Ogłoszenie z naszej strony", what: "Tekst ogłoszenia o pracę z naszej strony internetowej.", want: "skrócić go do posta na LinkedIn.", bin: "ok",
+    lesson: "To już jest publiczne, każdy może to przeczytać. Możesz użyć dowolnego narzędzia AI." },
+  { icon: "📝", short: "Notatki ze spotkania o planach", what: "Notatki ze spotkania zespołu o planach sprzedaży na III kwartał.", want: "zrobić z nich listę zadań.", bin: "work",
+    lesson: "Plany firmy to informacja wewnętrzna. W darmowym czacie tracisz nad nią kontrolę. W firmowym AI to zwykła praca." },
+  { icon: "🔑", short: "Hasło do CRM", what: "Login i hasło do firmowego systemu CRM.", want: "żeby AI pomogło napisać instrukcję logowania dla nowej osoby.", bin: "no",
+    lesson: "Hasła nie wklejaj nigdzie, także do firmowego AI. Do instrukcji wystarczy „[Twoje hasło]”. Samo hasło przekaż osobno, tak jak przewiduje Twoja firma." },
+  { icon: "📧", short: "Mail od klienta", what: "Mail od klienta z jego imieniem, nazwiskiem i numerem zamówienia.", want: "przygotować odpowiedź.", bin: "work",
+    lesson: "Dane klienta, których potrzebujesz do zadania, mogą trafić do firmowego AI. Do darmowego czatu nie. Możesz też najpierw zamienić je na [Imię] i [Numer zamówienia]." },
+  { icon: "💬", short: "Ogólne pytanie o maila", what: "Pytanie: „Jak napisać uprzejmy mail z przeprosinami za opóźnienie?”", want: "dostać kilka wskazówek.", bin: "ok",
+    lesson: "Nie ma tu żadnych danych firmy ani osób. Takie pytania możesz zadawać w każdym narzędziu." },
+  { icon: "📋", short: "Lista klientów z numerami PESEL", what: "Lista 300 klientów z imionami, nazwiskami i numerami PESEL.", want: "posortować ją alfabetycznie.", bin: "no",
+    lesson: "Do sortowania nie potrzebujesz AI, Excel zrobi to w sekundę. Dużej liczby danych osobowych, takich jak PESEL, nie wklejaj, jeśli zadanie tego nie wymaga." },
+  { icon: "📊", short: "Wyniki przed publikacją", what: "Wyniki finansowe firmy za kwartał, jeszcze przed oficjalną publikacją.", want: "przygotować slajdy dla zarządu.", bin: "work",
+    lesson: "To informacje poufne, ale w firmowym AI to normalna praca. W darmowym czacie nigdy: to byłby wyciek poufnych danych." },
+  { icon: "📄", short: "Twoje własne CV", what: "Twoje własne CV z adresem i numerem telefonu.", want: "poprawić opis doświadczenia.", bin: "ok",
+    lesson: "To Twoje dane, więc to Twoja decyzja. Zanim wkleisz CV do darmowego czatu, usuń adres i telefon: AI nie potrzebuje ich, żeby poprawić tekst. A firmowe AI nie służy do prywatnych spraw." },
+  { icon: "🩺", short: "Zwolnienie lekarskie z diagnozą", what: "Zwolnienie lekarskie osoby z Twojego zespołu, z diagnozą.", want: "streścić je w mailu do działu kadr.", bin: "no",
+    lesson: "Dane o zdrowiu są szczególnie chronione przez RODO. Nie wklejaj ich do AI. Kadrom wystarczy informacja, że ktoś jest na zwolnieniu i do kiedy." },
+  { icon: "🗳️", short: "Anonimowa ankieta pracowników", what: "Komentarze z anonimowej ankiety pracowników, bez nazwisk.", want: "znaleźć najczęstsze tematy.", bin: "work",
+    lesson: "Nawet bez nazwisk to wewnętrzne opinie pracowników, więc tylko firmowe AI. Sprawdź też, czy z treści komentarza nie da się kogoś rozpoznać." }
+];
+
+const CARDS_EN = [
+  { icon: "🌐", short: "Job ad from our website", what: "The text of a job ad from our company website.", want: "shorten it into a LinkedIn post.", bin: "ok",
+    lesson: "It's already public, anyone can read it. You can use any AI tool." },
+  { icon: "📝", short: "Notes from a planning meeting", what: "Notes from a team meeting about Q3 sales plans.", want: "turn them into a to-do list.", bin: "work",
+    lesson: "Company plans are internal information. In a free chatbot you lose control over them. In your company's AI, this is everyday work." },
+  { icon: "🔑", short: "CRM password", what: "The username and password for the company CRM.", want: "have the AI help write login instructions for a new colleague.", bin: "no",
+    lesson: "Don't paste a password anywhere, not even into your company's AI. For the instructions, “[your password]” is enough. Share the password itself separately, the way your company requires." },
+  { icon: "📧", short: "Email from a customer", what: "An email from a customer with their full name and order number.", want: "draft a reply.", bin: "work",
+    lesson: "Customer details you need for the task can go into your company's AI. Not into a free chatbot. You can also replace them with [Name] and [Order number] first." },
+  { icon: "💬", short: "General question about an email", what: "A question: “How do I write a polite apology email for a delay?”", want: "get a few tips.", bin: "ok",
+    lesson: "There's no company or personal data here. You can ask questions like this in any tool." },
+  { icon: "📋", short: "Customer list with ID numbers", what: "A list of 300 customers with full names and national ID numbers.", want: "sort it alphabetically.", bin: "no",
+    lesson: "You don't need AI to sort a list: Excel does it in a second. Don't paste large amounts of personal data, like ID numbers, when the task doesn't need them." },
+  { icon: "📊", short: "Results before release", what: "The company's quarterly financial results, before the official release.", want: "make slides for the board.", bin: "work",
+    lesson: "This is confidential, but in your company's AI it's normal work. Never in a free chatbot: that would be a leak of confidential information." },
+  { icon: "📄", short: "Your own CV", what: "Your own CV, with your address and phone number.", want: "improve how your experience is described.", bin: "ok",
+    lesson: "It's your data, so it's your call. Before pasting your CV into a free chatbot, remove your address and phone number: the AI doesn't need them to improve the text. And your company's AI isn't for private matters." },
+  { icon: "🩺", short: "Sick note with a diagnosis", what: "A sick note for someone on your team, including the diagnosis.", want: "summarize it in an email to HR.", bin: "no",
+    lesson: "Health data has special protection under data protection law (GDPR). Don't paste it into AI. HR only needs to know that someone is on sick leave and until when." },
+  { icon: "🗳️", short: "Anonymous employee survey", what: "Comments from an anonymous employee survey, without names.", want: "find the most common themes.", bin: "work",
+    lesson: "Even without names, these are employees' internal opinions, so company AI only. Also check whether anyone could be recognized from what they wrote." }
+];
+
+function starsWordPl(n) {
+  if (n === 1) return "gwiazdka";
+  const last = n % 10, lastTwo = n % 100;
+  return last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14) ? "gwiazdki" : "gwiazdek";
+}
+
+const TEXT = {
+  pl: {
+    title: "Czy mogę to wkleić?",
+    logo: 'Czy mogę to <span class="ai">wkleić?</span>',
+    hello: "Cześć, to znowu ja, Bajtek! Sprawdźmy, co można wkleić do AI, a czego lepiej nie.",
+    bins: {
+      ok: ["Śmiało", "Informacje publiczne albo ogólne pytania. Można użyć dowolnego narzędzia, także darmowego czatu."],
+      work: ["Tylko w firmowym AI", "Informacje firmowe i dane klientów potrzebne do zadania. Tylko w narzędziu zatwierdzonym przez firmę, na firmowym koncie (np. Copilot w Microsoft 365)."],
+      no: ["Nie wklejaj", "Hasła, dane o zdrowiu i dane osobowe, których zadanie nie wymaga. Nigdzie, także do firmowego AI."]
+    },
+    legendTitle: "Trzy odpowiedzi",
+    whyTitle: "Dlaczego to ważne?",
+    why: "Darmowy czat na prywatnym koncie jest poza kontrolą firmy, a rozmowy mogą służyć do trenowania modeli (zależnie od ustawień). Firmowe AI jest objęte umową firmy z dostawcą: dane są chronione i zwykle nie służą do trenowania.",
+    expectTitle: "Czego się spodziewać?",
+    expect: "10 sytuacji z pracy, około 4 minut. Przy każdej wybierasz jedną z trzech odpowiedzi. Możesz też używać klawiszy 1, 2 i 3.",
+    start: "Zaczynamy",
+    think: "Co z tym zrobisz?",
+    round: "Sytuacja",
+    want: "Chcesz:",
+    ok: "Dobrze! Masz gwiazdkę.",
+    no: (bin) => `Nie tym razem. Prawidłowo: ${bin}.`,
+    right: "Prawidłowo",
+    you: "Ty",
+    lesson: "Dlaczego?",
+    next: "Dalej",
+    result: "Zobacz wynik",
+    points: "Gwiazdki",
+    stars: starsWordPl,
+    msgs: [
+      "Perfekcyjnie! Twoje dane są w dobrych rękach.",
+      "Świetnie! Wiesz, na co uważać.",
+      "Nieźle! Kilka pułapek jeszcze Cię zaskoczyło.",
+      "Dobrze, że to była tylko gra! Zagraj jeszcze raz."
+    ],
+    endTitle: "Zanim wkleisz, zapytaj siebie",
+    checklist: [
+      ["Czy jest tu hasło, klucz dostępu, dane o zdrowiu albo dużo danych osobowych?", "Nie wklejaj."],
+      ["Czy to informacje firmowe albo dane klientów?", "Tylko w firmowym AI i tylko tyle, ile potrzeba."],
+      ["Czy to publiczne albo ogólne?", "Śmiało."]
+    ],
+    policy: "To ogólne zasady. Twoja firma może mieć własną politykę AI: sprawdź ją albo zapytaj dział IT lub bezpieczeństwa.",
+    reviewTitle: "Twoje odpowiedzi",
+    correct: "dobrze",
+    wrong: "źle",
+    again: "Zagraj jeszcze raz",
+    series: "Z tej samej serii:",
+    games: [["Myśl jak AI", "https://kian09j.github.io/mysl_jak_ai/"], ["Popraw polecenie", "https://kian09j.github.io/popraw_polecenie/"]],
+    footnote: "To ogólne zasady. W Twojej firmie mogą obowiązywać własne."
+  },
+  en: {
+    title: "Can I paste this?",
+    logo: 'Can I <span class="ai">paste</span> this?',
+    hello: "Hi, it's me again, Bajtek! Let's see what you can paste into AI, and what you'd better not.",
+    bins: {
+      ok: ["Go ahead", "Public information or general questions. Any AI tool is fine, including a free chatbot."],
+      work: ["Company AI only", "Company information and customer data the task needs. Only in a tool your company approved, on your work account (e.g. Copilot in Microsoft 365)."],
+      no: ["Don't paste", "Passwords, health data and personal data the task doesn't need. Nowhere, not even in your company's AI."]
+    },
+    legendTitle: "Three answers",
+    whyTitle: "Why does it matter?",
+    why: "A free chatbot on a personal account is outside your company's control, and conversations may be used to train models (depending on settings). Company AI is covered by your company's agreement with the provider, which protects the data and usually keeps it out of model training.",
+    expectTitle: "What to expect",
+    expect: "10 situations from work, about 4 minutes. For each one, you pick one of three answers. You can also use the 1, 2 and 3 keys.",
+    start: "Let's go",
+    think: "What will you do with this?",
+    round: "Situation",
+    want: "You want to:",
+    ok: "Right! You earned a star.",
+    no: (bin) => `Not this time. The answer: ${bin}.`,
+    right: "Correct",
+    you: "You",
+    lesson: "Why?",
+    next: "Next",
+    result: "See your score",
+    points: "Stars",
+    stars: (n) => (n === 1 ? "star" : "stars"),
+    msgs: [
+      "Perfect! Your data is in safe hands.",
+      "Great! You know what to watch out for.",
+      "Not bad! A few traps caught you out.",
+      "Good thing this was just a game! Try again."
+    ],
+    endTitle: "Before you paste, ask yourself",
+    checklist: [
+      ["Is there a password, an access key, health data or a lot of personal data?", "Don't paste it."],
+      ["Is it company information or customer data?", "Company AI only, and only as much as the task needs."],
+      ["Is it public or general?", "Go ahead."]
+    ],
+    policy: "These are general rules. Your company may have its own AI policy: check it or ask your IT or security team.",
+    reviewTitle: "Your answers",
+    correct: "right",
+    wrong: "wrong",
+    again: "Play again",
+    series: "Also in this series:",
+    games: [["Think like AI", "https://kian09j.github.io/mysl_jak_ai/"], ["Fix the prompt", "https://kian09j.github.io/popraw_polecenie/"]],
+    footnote: "These are general rules. Your company may have its own."
+  }
+};
+
+const NOTE_COLORS = ["#fdebec", "#e7f3f8", "#edf3ec"];
+const ICONS = { star: "⭐", arrow: "→", bulb: "💡", policy: "📌" };
+
+// Set by setLang(): the active language's cards and UI text.
+let CARDS = CARDS_PL, T = TEXT.pl;
+let lang = "pl";
+
+// Bajtek, the little robot guide from "Myśl jak AI". Mood: idle, think, happy, oops.
+function mascot(mood = "idle") {
+  const ink = "#37352f";
+  return `
+  <svg class="mascot" data-mood="${mood}" viewBox="0 0 120 120" aria-hidden="true">
+    <g class="body" fill="none" stroke="${ink}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M35 99C27 99 24 95 23 90"/>
+      <path d="M85 99C93 99 96 95 97 90"/>
+      <rect x="34" y="88" width="52" height="26" rx="11" fill="#fff"/>
+      <path d="M60 108c-5-3.4-7.6-6-7.6-8.6a3.6 3.6 0 0 1 7.6-1.6a3.6 3.6 0 0 1 7.6 1.6c0 2.6-2.6 5.2-7.6 8.6z" fill="#e16259" stroke-width="2.5"/>
+      <path d="M60 26V14"/>
+      <circle cx="60" cy="9" r="5.5" fill="#f5c84c"/>
+      <rect x="8" y="46" width="11" height="20" rx="5" fill="#fff"/>
+      <rect x="101" y="46" width="11" height="20" rx="5" fill="#fff"/>
+      <rect x="16" y="24" width="88" height="64" rx="24" fill="#fff"/>
+      <rect x="28" y="37" width="64" height="40" rx="14" fill="#f1f1ef" stroke-width="2.5"/>
+    </g>
+    <g class="eyes-open">
+      <ellipse cx="47" cy="56" rx="5" ry="6.5" fill="${ink}"/>
+      <ellipse cx="73" cy="56" rx="5" ry="6.5" fill="${ink}"/>
+      <g class="pupil"><circle cx="48.6" cy="53.6" r="1.7" fill="#fff"/><circle cx="74.6" cy="53.6" r="1.7" fill="#fff"/></g>
+    </g>
+    <g class="eyes-happy" fill="none" stroke="${ink}" stroke-width="3.5" stroke-linecap="round">
+      <path d="M41.5 58q5.5-8 11 0"/><path d="M67.5 58q5.5-8 11 0"/>
+    </g>
+    <circle cx="37" cy="66" r="3.5" fill="#f5c0c0"/>
+    <circle cx="83" cy="66" r="3.5" fill="#f5c0c0"/>
+    <path class="m-smile" d="M55 66q5 4.5 10 0" fill="none" stroke="${ink}" stroke-width="3" stroke-linecap="round"/>
+    <path class="m-big" d="M53.5 64.5q6.5 9 13 0z" fill="${ink}"/>
+    <ellipse class="m-o" cx="60" cy="68" rx="3.5" ry="4" fill="${ink}"/>
+  </svg>`;
+}
+
+const $ = (id) => document.getElementById(id);
+const screen = $("screen");
+let current = 0;
+let score = 0;
+let answers = [];   // the bin the player picked for each card
+let view = "start";
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+const binName = (k) => T.bins[k][0];
+const binPill = (k) => `<span class="rb" style="background:${BIN_STYLE[k].pill}">${BIN_STYLE[k].emoji} ${esc(binName(k))}</span>`;
+
+function setScreen(html) {
+  screen.classList.remove("screen-in");
+  screen.innerHTML = html;
+  void screen.offsetWidth;
+  screen.classList.add("screen-in");
+}
+
+function setChrome(inGame) {
+  $("stats").classList.toggle("hidden", !inGame);
+  $("trail").classList.toggle("hidden", !inGame);
+  $("footnote").classList.toggle("hidden", !inGame);
+  $("lang").classList.toggle("hidden", inGame);
+}
+
+function readSavedLang() {
+  try { return localStorage.getItem("lang"); } catch (e) { return null; }
+}
+
+function setLang(l) {
+  lang = l === "en" ? "en" : "pl";
+  CARDS = lang === "en" ? CARDS_EN : CARDS_PL;
+  T = TEXT[lang];
+  document.documentElement.lang = lang;
+  document.title = T.title;
+  $("logo").innerHTML = T.logo;
+  $("footnote").textContent = T.footnote;
+  document.querySelectorAll("#lang button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+  try { localStorage.setItem("lang", lang); } catch (e) { /* storage unavailable */ }
+}
+
+document.querySelectorAll("#lang button").forEach((b) => b.addEventListener("click", () => {
+  if (b.dataset.lang === lang) return;
+  setLang(b.dataset.lang);
+  if (view === "end") showEnd(); else showStart();
+}));
+
+// Keys 1, 2 and 3 pick an answer while a situation is waiting for one.
+document.addEventListener("keydown", (e) => {
+  if (view !== "round" || e.altKey || e.ctrlKey || e.metaKey) return;
+  const i = ["1", "2", "3"].indexOf(e.key);
+  if (i < 0) return;
+  const b = screen.querySelector(`.bin[data-bin="${BIN_KEYS[i]}"]`);
+  if (b && !b.disabled) { e.preventDefault(); b.click(); }
+});
+
+function updateStats(bump) {
+  $("progressText").textContent = `${current + 1}/${CARDS.length}`;
+  const sp = $("scoreText");
+  sp.innerHTML = `${ICONS.star}<span>${score}</span>`;
+  sp.setAttribute("aria-label", `${T.points}: ${score}`);
+  if (bump) { sp.classList.remove("bump"); void sp.offsetWidth; sp.classList.add("bump"); }
+  $("trail").innerHTML = CARDS.map((c, i) => {
+    if (i < answers.length) return `<span class="step ${answers[i] === c.bin ? "ok" : "no"}"></span>`;
+    return `<span class="step${i === current ? " now" : ""}"></span>`;
+  }).join("");
+}
+
+function seriesHTML() {
+  return `<p class="series">${esc(T.series)} ${T.games.map(([name, url]) => `<a href="${url}?lang=${lang}">${esc(name)} ${ICONS.arrow}</a>`).join("")}</p>`;
+}
+
+/* ---------- Screens ---------- */
+function startGame() { current = 0; score = 0; answers = []; showRound(); }
+
+function showStart() {
+  view = "start";
+  setChrome(false);
+  setScreen(`
+    <div class="hero">
+      ${mascot("idle")}
+      <h1>${esc(T.title)}</h1>
+      <div class="bubble">👋 ${esc(T.hello)}</div>
+      <section class="legend">
+        <h2>${esc(T.legendTitle)}</h2>
+        <ul>
+          ${BIN_KEYS.map((k) => `
+            <li style="--tint:${BIN_STYLE[k].tint}">
+              <span class="emoji" aria-hidden="true">${BIN_STYLE[k].emoji}</span>
+              <div><strong>${esc(T.bins[k][0])}</strong><p>${esc(T.bins[k][1])}</p></div>
+            </li>`).join("")}
+        </ul>
+      </section>
+      <div class="why"><strong>${esc(T.whyTitle)}</strong><p>${esc(T.why)}</p></div>
+      <div class="expect"><strong>${esc(T.expectTitle)}</strong><p>${esc(T.expect)}</p></div>
+      <button class="btn" id="startBtn">${esc(T.start)} ${ICONS.arrow}</button>
+    </div>
+    ${seriesHTML()}`);
+  $("startBtn").onclick = startGame;
+  $("startBtn").focus();
+}
+
+function showRound() {
+  view = "round";
+  setChrome(true);
+  updateStats();
+  const c = CARDS[current];
+  setScreen(`
+    <div class="guide">
+      ${mascot("think")}
+      <div class="bubble" id="bubble" role="status" aria-live="polite">${esc(T.think)}</div>
+    </div>
+    <span class="round-tag">${esc(T.round)} ${current + 1}</span>
+    <div class="sit" id="sit">
+      <span class="icon" aria-hidden="true">${c.icon}</span>
+      <div>
+        <p class="what">${esc(c.what)}</p>
+        <p class="want"><b>${esc(T.want)}</b> ${esc(c.want)}</p>
+      </div>
+    </div>
+    <div class="bins" id="bins">
+      ${BIN_KEYS.map((k, i) => `
+        <button type="button" class="bin" data-bin="${k}">
+          <span class="top"><span class="emoji" aria-hidden="true">${BIN_STYLE[k].emoji}</span><span class="key" aria-hidden="true">${i + 1}</span></span>
+          <span class="label">${esc(binName(k))}</span>
+          <span class="marks"></span>
+        </button>`).join("")}
+    </div>
+    <div id="after"></div>`);
+  screen.querySelectorAll(".bin").forEach((b) => b.addEventListener("click", () => answer(b.dataset.bin)));
+  screen.querySelector(".bin").focus({ preventScroll: true });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function setBubble(text, cls) {
+  const b = $("bubble");
+  b.textContent = text;
+  b.className = "bubble pop " + (cls || "");
+}
+
+function answer(pick) {
+  if (answers.length > current) return;
+  const c = CARDS[current];
+  const correct = pick === c.bin;
+  answers.push(pick);
+  if (correct) score++;
+  updateStats(correct);
+
+  // Mark the right answer and the player's pick on the buttons, and stamp the card.
+  const bins = $("bins");
+  bins.classList.add("answered");
+  bins.querySelectorAll(".bin").forEach((b) => {
+    b.disabled = true;
+    const marks = b.querySelector(".marks");
+    if (b.dataset.bin === c.bin) { b.classList.add("is-right"); marks.insertAdjacentHTML("beforeend", `<span class="mark right">✓ ${esc(T.right)}</span>`); }
+    if (b.dataset.bin === pick) { b.classList.add("is-you"); marks.insertAdjacentHTML("beforeend", `<span class="mark you">${esc(T.you)}</span>`); }
+  });
+  const sit = $("sit");
+  sit.classList.add(BIN_STYLE[c.bin].done);
+  sit.insertAdjacentHTML("beforeend", `<span class="stamp" style="background:${BIN_STYLE[c.bin].pill}" aria-hidden="true">${BIN_STYLE[c.bin].emoji} ${esc(binName(c.bin))}</span>`);
+
+  screen.querySelector(".mascot").dataset.mood = correct ? "happy" : "oops";
+  if (correct) setBubble(T.ok, "ok"); else setBubble(T.no(binName(c.bin)), "no");
+
+  const isLast = current === CARDS.length - 1;
+  setTimeout(() => {
+    $("after").innerHTML = `
+      <div class="lesson"><h3>${ICONS.bulb} ${esc(T.lesson)}</h3><p id="lessonText">${esc(c.lesson)}</p></div>
+      <div class="actions"><button class="btn" id="nextBtn" aria-describedby="lessonText">${esc(isLast ? T.result : T.next)} ${ICONS.arrow}</button></div>`;
+    const nextBtn = $("nextBtn");
+    nextBtn.onclick = () => { if (isLast) showEnd(); else { current++; showRound(); } };
+    // The answer buttons were disabled, so focus fell back to the page: hand it to the next step.
+    nextBtn.focus({ preventScroll: true });
+    $("after").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, 600);
+}
+
+function showEnd() {
+  view = "end";
+  setChrome(false);
+  const total = CARDS.length;
+  const msg = T.msgs[score === total ? 0 : score >= total - 2 ? 1 : score >= total / 2 ? 2 : 3];
+  setScreen(`
+    <div class="hero">
+      ${mascot(score >= total / 2 ? "happy" : "think")}
+      <div class="score-blob"><b>${score}/${total}</b><br><span>${esc(T.stars(score))}</span></div>
+      <p class="score-msg">${esc(msg)}</p>
+    </div>
+    <h2>${esc(T.endTitle)}</h2>
+    <ol class="check">
+      ${T.checklist.map(([q, a], i) => `
+        <li style="--tint:${NOTE_COLORS[i]};--delay:${0.15 + i * 0.12}s">
+          <span class="num">${i + 1}</span><div>${esc(q)} <strong>${esc(a)}</strong></div>
+        </li>`).join("")}
+    </ol>
+    <div class="policy"><span class="ico">${ICONS.policy}</span><span>${esc(T.policy)}</span></div>
+    <h2>${esc(T.reviewTitle)}</h2>
+    <ul class="review">
+      ${CARDS.map((c, i) => {
+        const ok = answers[i] === c.bin;
+        return `<li>
+          <span class="ri" aria-hidden="true">${c.icon}</span>
+          <span class="rt">${esc(c.short)}</span>
+          ${binPill(c.bin)}
+          <span class="rr ${ok ? "ok" : "no"}" aria-label="${esc(ok ? T.correct : T.wrong)}">${ok ? "✓" : "✗"}</span>
+        </li>`;
+      }).join("")}
+    </ul>
+    <div class="end-actions"><button class="btn" id="againBtn">${esc(T.again)} ${ICONS.arrow}</button></div>
+    ${seriesHTML()}`);
+  $("againBtn").onclick = startGame;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+const urlLang = new URLSearchParams(location.search).get("lang");
+setLang(urlLang === "en" || urlLang === "pl" ? urlLang : readSavedLang() || "pl");
+showStart();
+</script>
+</body>
+</html>
