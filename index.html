@@ -206,6 +206,7 @@
   .expect p { margin: 2px 0 0; }
   .series { margin: 26px 0 0; font-size: 14px; color: var(--muted); }
   .series a { margin-right: 10px; white-space: nowrap; }
+  .series.home { margin-top: 8px; }
 
   .score-blob b { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
   .score-blob span { color: var(--muted); }
@@ -379,6 +380,7 @@ const TEXT = {
     wrong: "źle",
     again: "Zagraj jeszcze raz",
     series: "Z tej samej serii:",
+    home: "Wszystkie gry z serii AI w pracy",
     games: [["Myśl jak AI", "https://kian09j.github.io/mysl_jak_ai/"], ["Popraw polecenie", "https://kian09j.github.io/popraw_polecenie/"], ["Złap halucynację", "https://kian09j.github.io/zlap_halucynacje/"]],
     footnote: "To ogólne zasady. W Twojej firmie mogą obowiązywać własne."
   },
@@ -427,6 +429,7 @@ const TEXT = {
     wrong: "wrong",
     again: "Play again",
     series: "Also in this series:",
+    home: "All games in the AI at work series",
     games: [["Think like AI", "https://kian09j.github.io/mysl_jak_ai/"], ["Fix the prompt", "https://kian09j.github.io/popraw_polecenie/"], ["Catch the hallucination", "https://kian09j.github.io/zlap_halucynacje/"]],
     footnote: "These are general rules. Your company may have its own."
   }
@@ -544,7 +547,8 @@ function updateStats(bump) {
 }
 
 function seriesHTML() {
-  return `<p class="series">${esc(T.series)} ${T.games.map(([name, url]) => `<a href="${url}?lang=${lang}">${esc(name)} ${ICONS.arrow}</a>`).join("")}</p>`;
+  return `<p class="series">${esc(T.series)} ${T.games.map(([name, url]) => `<a href="${url}?lang=${lang}">${esc(name)} ${ICONS.arrow}</a>`).join("")}</p>
+    <p class="series home"><a href="https://kian09j.github.io/?lang=${lang}">${esc(T.home)} ${ICONS.arrow}</a></p>`;
 }
 
 /* ---------- Screens ---------- */
